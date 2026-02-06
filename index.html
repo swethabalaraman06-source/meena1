@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Valentine?</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e6d3b1;
+      overflow: hidden;
+    }
+
+    /* ✨ SPARKLES */
+    .sparkle {
+      position: fixed;
+      bottom: -10px;
+      font-size: 12px;
+      opacity: 0.8;
+      animation: floatUp linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0) scale(1); opacity: 1; }
+      to { transform: translateY(-120vh) scale(1.4); opacity: 0; }
+    }
+
+    .page { display: none; text-align: center; z-index: 2; }
+    .active { display: block; }
+
+    .card {
+      background: #fff;
+      padding: 40px;
+      border-radius: 25px;
+      width: 350px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      position: relative;
+      z-index: 5;
+    }
+
+    h2 { color: #444; margin-bottom: 20px; }
+
+    input {
+      padding: 12px;
+      width: 80%;
+      border-radius: 15px;
+      border: 1px solid #ccc;
+      outline: none;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .hint { font-size: 13px; color: #777; margin-bottom: 15px; }
+    .error { color: #c0392b; font-size: 14px; margin-top: 10px; }
+
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #c49a6c;
+      color: white;
+    }
+
+    .sloth { font-size: 80px; margin-bottom: 15px; animation: blink 4s infinite; }
+    @keyframes blink { 0%,90%,100%{transform:scaleY(1);}95%{transform:scaleY(0.1);} }
+
+    .buttons { position: relative; height: 80px; }
+    #no { background-color: #999; position: absolute; }
+
+    /* 💞 FADE + BLUR → SHARPEN SLIDESHOW IN PLACE */
+    .slideshow {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: auto;
+      margin-bottom: 20px;
+    }
+
+    .slideshow img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+
+      opacity: 0;
+      filter: blur(15px) brightness(0.9);
+
+      transition:
+        opacity 1.6s ease-in-out,
+        filter 1.6s ease-in-out,
+        box-shadow 1.5s ease-in-out;
+      box-shadow: 0 0 0 rgba(255,255,255,0);
+    }
+
+    .slideshow img.active {
+      opacity: 1;
+      filter: blur(0px) brightness(1);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- 🎵 MUSIC -->
+<audio id="bgMusic" preload="auto" loop>
+  <source src="song1.MP3.mp3" type="audio/mp3">
+</audio>
+
+<!-- PAGE 1 -->
+<div class="page active" id="page1">
+  <div class="card">
+    <h2>Do you wanna move forward? 🤎</h2>
+    <div class="hint">Hint: How I used to call you?</div>
+    <input type="text" id="answer" placeholder="Type here">
+    <br><br>
+    <button onclick="checkAnswer()">Continue</button>
+    <div class="error" id="error"></div>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+  <div class="card">
+    <div class="sloth">🦥</div>
+    <h2>Will you be my Valentine<br>Mr. Kiruthick Rajan? 🤎</h2>
+    <div class="buttons">
+      <button onclick="goFinal()">Yes</button>
+      <button id="no">No</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="page3">
+  <div class="card">
+    <div class="slideshow" id="slideshow">
+      <img src="image1.jpeg" class="active">
+      <img src="image2.jpeg">
+      <img src="imag3.jpeg">
+      <img src="image4.jpeg">
+    </div>
+    <h2>Forever Us 🤎</h2>
+    <p style="font-size:13px;color:#777;">You came into my life quietly, but you became the most beautiful part of my world. I don’t just love you… I feel safe, peaceful, and complete with you.✨</p>
+  </div>
+</div>
+
+<script>
+  const music = document.getElementById("bgMusic");
+  const noBtn = document.getElementById("no");
+  music.volume = 0;
+
+  function showPage(num) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById("page" + num).classList.add("active");
+  }
+
+  function checkAnswer() {
+    const val = document.getElementById("answer").value.trim().toLowerCase();
+    if (val === "gundu") showPage(2);
+    else document.getElementById("error").innerText = "Hmm… try again 🤍";
+  }
+
+  function goFinal() {
+    showPage(3);
+    startSlideshow();
+    startSparkles();
+    fadeInMusic();
+  }
+
+  noBtn.addEventListener("mouseover", () => {
+    noBtn.style.left = Math.random() * 200 + "px";
+    noBtn.style.top = Math.random() * 50 + "px";
+  });
+
+  /* 🖼 SLIDESHOW FADE + BLUR → SHARPEN IN PLACE */
+  function startSlideshow() {
+    const slides = document.querySelectorAll("#slideshow img");
+    let current = 0;
+
+    setInterval(() => {
+      slides[current].classList.remove("active");
+      slides[current].style.boxShadow = "0 0 0px rgba(255,255,255,0)";
+
+      current = (current + 1) % slides.length;
+
+      slides[current].classList.add("active");
+      slides[current].style.boxShadow = "0 0 25px rgba(255,255,255,0.8)";
+      setTimeout(() => {
+        slides[current].style.boxShadow = "0 0 6px rgba(255,255,255,0.4)";
+      }, 900);
+
+      pulseMusic();
+    }, 5000);
+  }
+
+  function fadeInMusic() {
+    music.currentTime = 0;
+    music.play().catch(() => {});
+    let vol = 0;
+    const fade = setInterval(() => {
+      if (vol < 0.6) { vol += 0.02; music.volume = vol; }
+      else clearInterval(fade);
+    }, 200);
+  }
+
+  function pulseMusic() {
+    music.volume = 0.5;
+    setTimeout(() => music.volume = 0.65, 600);
+    setTimeout(() => music.volume = 0.5, 1600);
+  }
+
+  function startSparkles() {
+    setInterval(() => {
+      const sparkle = document.createElement("div");
+      sparkle.className = "sparkle";
+      sparkle.innerHTML = "🤎🤎";
+      sparkle.style.left = Math.random() * 100 + "vw";
+      sparkle.style.animationDuration = (6 + Math.random() * 4) + "s";
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 10000);
+    }, 400);
+  }
+</script>
+
+</body>
+</html>
